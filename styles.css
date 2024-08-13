@@ -1,0 +1,171 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#controls {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    z-index: 100;
+}
+
+#racetrack {
+    display: flex;
+    background-color: #4CAF50;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+#horses, #tracks {
+    display: flex;
+}
+
+.horse-track {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.horse, .track-card {
+    width: calc(10% - 10px);
+    min-width: 60px;
+    height: 90px;
+    margin: 5px;
+    background-size: cover;
+    border-radius: 5px;
+}
+
+.horse {
+    position: absolute;
+    transition: all 0.5s ease;
+    z-index: 10;
+}
+
+.track {
+    display: flex;
+    flex-direction: column;
+}
+
+.track-card {
+    background-color: #fff;
+    border: 2px solid #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.track-card:first-child::after {
+    content: "INICIO";
+}
+
+.track-card:last-child::after {
+    content: "META";
+    color: red;
+}
+
+#drawn-cards {
+    width: calc(10% - 10px);
+    min-width: 60px;
+}
+
+.drawn-card {
+    width: 100%;
+    height: 90px;
+    margin: 5px 0;
+    background-size: cover;
+}
+
+button {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+#modal-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#modal-close:hover,
+#modal-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#start-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
+
+#startRace {
+    font-size: 24px;
+    padding: 15px 30px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
