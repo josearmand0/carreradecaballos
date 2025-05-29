@@ -4,16 +4,23 @@ body {
     background-color: #f0f0f0;
     margin: 0;
     padding: 0;
+    overflow-y: hidden; /* Evitar scroll vertical en la página */
 }
 
 #game-container {
     display: flex;
     justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    align-items: stretch; /* Estirar hijos para que ocupen la altura */
+    height: 100vh; /* Ocupar toda la altura de la ventana */
     width: 100%;
     padding: 20px;
+    gap: 20px; /* Space between racetrack and drawn cards */
     box-sizing: border-box;
+    transition: filter 0.3s ease-out, brightness 0.3s ease-out; /* Transición para el efecto de fondo */
+}
+
+#game-container.modal-active-background {
+    filter: blur(3px) brightness(0.7);
 }
 
 #controls {
@@ -26,13 +33,17 @@ body {
 #racetrack {
     display: flex;
     background-color: #4CAF50;
-    padding: 10px;
+    padding: 10px; /* Este padding reduce el espacio interno para #horses */
     border-radius: 10px;
     max-width: 100%;
     overflow-x: auto;
+    overflow-y: hidden; /* Evitar scroll vertical dentro del racetrack principal */
+    justify-content: center; /* Centrar el contenido (#horses) si es más angosto que el racetrack */
+    flex-grow: 1; /* Permitir que racetrack crezca si game-container es flex y tiene otros elementos */
 }
 
-#horses, #tracks {
+/* #horses, #tracks { */ /* #tracks is removed */
+#horses {
     display: flex;
 }
 
@@ -44,11 +55,14 @@ body {
 }
 
 .horse, .track-card {
-    width: calc(10% - 10px);
-    min-width: 60px;
-    height: 90px;
-    margin: 5px;
+    /* width: calc(10% - 10px); */ /* Replaced with fixed size */
+    /* min-width: 60px; */
+    width: 70px;
+    min-width: 70px;
+    /* height: 105px; */ /* Altura ahora dinámica para .track-card y .horse */
+    margin: 2px 5px; /* Margen ajustado, especialmente vertical */
     background-size: cover;
+    background-position: center; /* Asegurar que el fondo esté centrado */
     border-radius: 5px;
 }
 
@@ -56,11 +70,17 @@ body {
     position: absolute;
     transition: all 0.5s ease;
     z-index: 10;
+    background-size: contain; /* Para que la imagen del As quepa y mantenga proporción */
+    background-repeat: no-repeat; /* Evitar que la imagen se repita */
+    background-position: center center; /* Centra la imagen horizontal y verticalmente */
+    /* La altura se establecerá por JS para coincidir con .track-card */
 }
 
 .track {
     display: flex;
     flex-direction: column;
+    height: 100%; /* Ocupar toda la altura de .horse-track */
+    width: auto; /* O el ancho necesario */
 }
 
 .track-card {
@@ -71,6 +91,9 @@ body {
     align-items: center;
     font-weight: bold;
     box-sizing: border-box;
+    flex-grow: 1; /* Permitir que las track-cards crezcan para llenar el espacio en .track */
+    flex-basis: 0; /* Asegurar que todas las track-cards comiencen con la misma base para flex-grow */
+    min-height: 0; /* Importante para que flex-grow funcione correctamente en flex-column */
 }
 
 .track-card:first-child::after {
@@ -83,15 +106,27 @@ body {
 }
 
 #drawn-cards {
-    width: calc(10% - 10px);
-    min-width: 60px;
+    /* width: calc(10% - 10px); */ /* Replaced with fixed size */
+    width: 100px; /* Container for drawn cards */
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #e0e0e0; /* Light background for the area */
+    border-radius: 8px;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Permitir scroll interno si hay muchas cartas sacadas */
 }
 
 .drawn-card {
-    width: 100%;
-    height: 90px;
-    margin: 5px 0;
+    width: 70px;  /* Smaller width for the card itself */
+    height: 105px; /* Adjusted height */
+    margin: 5px 0; /* Vertical margin for stacking */
     background-size: cover;
+    background-position: center;
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2); /* Subtle shadow */
 }
 
 button {
@@ -168,4 +203,124 @@ button:hover {
 .modal-buttons button {
     padding: 10px 20px;
     font-size: 16px;
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 768px) {
+    body {
+        /* Si game-container maneja su propio scroll, body puede permanecer hidden */
+        /* overflow-y: auto; */ /* O visible, si se prefiere el scroll de página */
+    }
+    
+    #game-container {
+        flex-direction: column; /* Apila racetrack y drawn-cards verticalmente */
+        padding: 0 5px 5px 5px; /* Sin padding superior, padding lateral y inferior pequeño */
+        gap: 5px; /* Espacio reducido entre drawn-cards y racetrack */
+        height: 100vh; /* Mantiene la altura completa del viewport */
+        overflow-y: hidden; /* Evitar scroll en el contenedor principal del juego en móvil */
+    }
+
+    #racetrack {
+        width: 100%; /* Ocupa el ancho completo de la columna */
+        /* overflow-y: auto; */ /* Podría ser necesario si las pistas individuales son muy largas */
+        flex-grow: 1; /* Hará que ocupe el espacio vertical restante */
+        min-height: 0; /* Necesario para que flex-grow funcione correctamente */
+        overflow-x: hidden; /* Prevenir scroll horizontal en el racetrack */
+        padding: 5px; /* Padding reducido para dar más espacio a las pistas */
+    }
+
+    #horses {
+        width: 100%; /* Asegurar que el contenedor de pistas use todo el ancho del racetrack */
+        height: 100%; /* Asegurar que el contenedor de pistas use toda la altura del racetrack */
+        gap: 4px; /* Añadir espacio horizontal (4px) entre las columnas .horse-track */
+        justify-content: center; /* Centrar las pistas si no ocupan todo el ancho */
+    }
+
+    .horse-track {
+        flex-grow: 1; /* Cada pista de caballo ocupa igual espacio horizontal */
+        flex-basis: 0; /* Base para que flex-grow distribuya equitativamente */
+        max-width: 70px; /* Limitar el ancho al de la carta de escritorio (70px) */
+        height: 100%; /* Cada pista de caballo ocupa toda la altura disponible */
+        /* align-items: center; */ /* Ya lo tiene, pero asegurar que el contenido se centre si es más angosto */
+    }
+
+    .track {
+        width: 100%; /* Asegurar que .track ocupe todo el ancho de .horse-track en móvil */
+    }
+
+    /* Ajustar tamaño de cartas de caballo y pista en móvil */
+    .horse, .track-card {
+        width: 100%; /* Ocupan todo el ancho de su .horse-track padre */
+        min-width: auto; /* Resetear min-width */
+        /* Margen vertical de 3px para separación entre track-cards. */
+        margin: 3px 0; /* Sin margen horizontal propio; el gap en #horses maneja la separación entre columnas. */
+    }
+
+    #drawn-cards {
+        order: -1; /* Mueve #drawn-cards antes de #racetrack en el flujo flex column */
+        width: 100%; /* Ocupa el ancho completo */
+        flex-direction: row; /* Cartas sacadas en fila horizontal */
+        justify-content: space-between; /* Distribuye el espacio entre las cartas */
+        align-items: center; /* Centra las cartas verticalmente */
+        overflow-x: hidden;  /* Previene el scroll horizontal */
+        overflow-y: hidden; /* Sin scroll vertical para el contenedor de cartas sacadas */
+        height: 90px; /* Altura reducida para la sección de cartas sacadas */
+        padding: 5px; /* Padding alrededor de las cartas */
+        flex-shrink: 0; /* Evita que se encoja si el racetrack necesita espacio */
+        box-sizing: border-box; /* Asegura que el padding y borde se incluyan en el height/width total */
+    }
+
+    .drawn-card {
+        /* Para 5 cartas visibles, con espacio entre ellas gestionado por justify-content */
+        /* El width debe ser un poco menos de 1/5 para dejar espacio visual */
+        /* Si #drawn-cards tiene padding: 5px, el ancho útil es 100% - 10px */
+        /* Para 5 cartas, cada una podría ser ~ (100% - 10px - 4*gaps) / 5 */
+        /* Simplificamos: daremos un width y dejaremos que space-between actúe */
+        width: 18%; /* Aproximadamente para 5 cartas con espacio */
+        max-width: 60px; /* Límite para que no se hagan demasiado grandes */
+        height: calc(100% - 10px); /* Altura del contenedor #drawn-cards (90px) - su padding vertical (2*5px) */
+        margin: 0;
+        background-size: contain; /* Muestra toda la imagen, puede dejar espacios */
+        background-position: center;
+        border-radius: 4px; /* Un poco más pequeño para cartas más pequeñas */
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.15); /* Sombra más sutil */
+    }
+    /* Mostrar solo las primeras 5 cartas (las más nuevas debido a prepend) */
+    #drawn-cards .drawn-card:nth-child(n+6) {
+        display: none;
+    }
+
+    .modal-content {
+        width: 90%;
+        margin: 20% auto; /* Ajusta el margen superior para pantallas más pequeñas */
+        padding: 15px;
+    }
+
+    .modal-buttons button, #player-inputs-container input {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+     #player-inputs-container input {
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    /* .horse y .track-card ya son width: 100% de su .horse-track padre */
+    /* .horse-track ya es flex-grow:1, así que se ajustan */
+
+    #drawn-cards {
+        height: 80px; /* Altura aún menor para pantallas muy pequeñas */
+        padding: 4px;
+    }
+    .drawn-card {
+        height: calc(100% - 8px); /* Altura del contenedor #drawn-cards (80px) - su padding vertical (2*4px) */
+        width: 17.5%; /* Ajuste para pantallas más pequeñas */
+        max-width: 50px;
+    }
+    /* La regla :nth-child(n+6) sigue aplicando */
+
+    #modal-title { font-size: 1.2em; }
+    #modal-message { font-size: 0.9em; }
+    button { font-size: 16px; padding: 8px 15px; }
 }
